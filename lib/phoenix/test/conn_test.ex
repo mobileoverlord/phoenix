@@ -116,6 +116,20 @@ defmodule Phoenix.ConnTest do
   end
 
   @doc """
+  Creates a connection to be used in upcoming requests
+  with a method, path and body derived from an existing conn.
+
+  This is useful when a specific connection is required
+  for testing a plug or a particular function.
+  """
+  @spec build_conn(atom | binary, binary, binary | list | map) :: Conn.t
+  def build_conn(%Conn{method: method, host: path}) do
+    Plug.Adapters.Test.Conn.conn(%Conn{}, method, path, nil)
+    |> Conn.put_private(:plug_skip_csrf_protection, true)
+    |> Conn.put_private(:phoenix_recycled, true)
+  end
+
+  @doc """
   Deprecated version of conn/0. Use build_conn/0 instead
   """
   @spec conn() :: Conn.t
